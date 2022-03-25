@@ -1,0 +1,111 @@
+{
+    "email": "",
+    "img_url": "",
+    "fname": "",
+    "lname": "",
+    "mobile_no": "",
+    "address": "",
+    "country": "",
+    "active_ws": "",
+    "ws": [],
+    "invitations": [
+        {
+            "name": "",
+            "redirect_url": "",
+            "from": ""
+        }
+    ]
+}
+
+{
+    "name": "",
+    "img_url": "",
+    "users": [],
+    "pending": [],
+    "subscription": "",
+    "located": "",
+    "employees": "",
+    "is_agency": ""
+}
+
+// subscription
+{
+    "package": "",
+    "name": "",
+    "country": "",
+    "postal_code": "",
+    "payment_method": "",
+    "payment_details": {
+        "card": [{}], // is_primary
+        "invoice": [{}],
+        "paypal": [{}],
+    },
+    "coupons": [{}] // is_primary
+}
+
+// generate coupons
+{
+    "name": "",
+    "created_at": "",
+    "valid_period": "",
+    "expired_at": "",
+    "features": {
+
+    },
+    "is_active": false
+}
+// create user
+// validate email send
+// validate email verify
+// login access token
+// login refresh token
+// token verify
+// get current user
+// get current user attr
+// get active workspace - 400 / 200
+// get workspaces - 204 / 200
+// get invitations
+// create workspace
+// get active workspace 
+// get active workspace attr
+// invite users to ws
+// remove users from ws
+// change user role
+// workspace update
+// workspace update attr
+// forgot pw
+// 
+
+
+{
+    "event_id": "3461",
+    "user_id": "7959",
+    "opponent_id": "109651",
+    "platform_feedback": {
+        "soundVideoQuality": false,
+        "networkingPartner": false,
+        "reportViolations": false
+    },
+    "opponentFeedback": {
+        "isMatchGood": 0,
+        "askedExcellentQuestions": false,
+        "communicatedUsefulInsights": false,
+        "wasGoodListener": false,
+        "sharedContent": false,
+        "wasOpenAndHonest": false,
+        "recommendNetworking": 0,
+        "rematch": false,
+        "skipped": true,
+        "scheduled": true
+    }
+}
+
+{
+    "event_id": "3461",
+    "user_id": "7959",
+    "opponent_id": "109651",
+    "rematch": false,
+    "skipped": true,
+    "scheduled": true,
+    "is_match_good": 0
+}

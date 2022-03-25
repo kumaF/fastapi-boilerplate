@@ -1,0 +1,1 @@
+from .health_routes import router as HealthRoutes

@@ -1,0 +1,638 @@
+// MongoDB Playground
+// To disable this template go to Settings | MongoDB | Use Default Template For Playground.
+// Make sure you are connected to enable completions and to be able to run a playground.
+// Use Ctrl+Space inside a snippet or a string literal to trigger completions.
+
+// Select the database to use.
+use('auth_db');
+
+
+// db.users_collection.aggregate([
+//     {
+//         '$match': {
+//             '_id': ObjectId('6219b5334d09cf55b70e0776')
+//         }
+//     },
+//     {
+//         '$project': {'invitations': 1}
+//     },
+//     {
+//         '$addFields': {
+//             'invitations': {
+//                 '$map': {
+//                     'input': '$invitations',
+//                     'in': {
+//                         '$mergeObjects': [
+//                             '$$this',
+//                             {
+//                                 'invited_at': {
+//                                     '$dateToString': {
+//                                         'date': '$$this.invited_at',
+//                                         'format': '%G-%m-%dT%H:%M:%S.%L%z',
+//                                         'timezone': 'UTC'
+//                                     }
+//                                 }
+//                             }
+//                         ]
+//                     }
+//                 }
+//             }
+//         }
+//     },
+//     {
+//         '$unwind': {
+//             'path': '$invitations',
+//             'preserveNullAndEmptyArrays': true
+//         }
+//     },
+//     {
+//         '$lookup': {
+//             'from': 'users_collection',
+//             'let': {
+//                 'user_id': {
+//                     '$toObjectId': '$invitations.invited_by'
+//                 },
+//                 'org_id': '$invitations.invited_to'
+//             },
+//             'pipeline': [
+//                 {
+//                     '$match': {'$expr': {'$eq': ['$_id', '$$user_id']}}
+//                 },
+//                 {
+//                     '$addFields': {
+//                         'id': {
+//                             '$toString': '$_id'
+//                         }
+//                     }
+//                 },
+//                 {
+//                     '$project': {
+//                         '_id': 0,
+//                         'id': 1,
+//                         'email': 1,
+//                         'first_name': 1,
+//                         'last_name': 1,
+//                         'mobile_no': 1,
+//                         'img_url': 1,
+//                         'workspace': {
+//                             '$filter': {
+//                                 'input': '$workspaces',
+//                                 'as': 'ws',
+//                                 'cond': {'$eq': ['$$ws.workspace_id', '$$org_id']}
+//                             }
+//                         }
+//                     }
+//                 },
+//                 {
+//                     '$unwind': {
+//                         'path': '$workspace',
+//                         'preserveNullAndEmptyArrays': true
+//                     }
+//                 },
+//                 {
+//                     '$project': {
+//                         'id': 1,
+//                         'email': 1,
+//                         'first_name': 1,
+//                         'last_name': 1,
+//                         'mobile_no': 1,
+//                         'img_url': 1,
+//                         'role': '$workspace.role'
+//                     }
+//                 },
+//             ],
+//             'as': 'invitations.invited_by'
+//         }
+//     },
+//     {
+//         '$unwind': {
+//             'path': '$invitations.invited_by',
+//             'preserveNullAndEmptyArrays': true
+//         }
+//     },
+//     {
+//         '$lookup': {
+//             'from': 'workspace_collection',
+//             'let': {
+//                 'workspace_id': {
+//                     '$toObjectId': '$invitations.invited_to'
+//                 }
+//             },
+//             'pipeline': [
+//                 {
+//                     '$match': {'$expr': {'$eq': ['$_id', '$$workspace_id']}}
+//                 },
+//                 {
+//                     '$addFields': {
+//                         'id': {
+//                             '$toString': '$_id'
+//                         }
+//                     }
+//                 },
+//                 {
+//                     '$project': {
+//                         '_id': 0,
+//                         'id': 1,
+//                         'name': 1,
+//                         'img_url': 1
+//                     }
+//                 }
+//             ],
+//             'as': 'invitations.invited_to'
+//         }
+//     },
+//     {
+//         '$unwind': {
+//             'path': '$invitations.invited_to',
+//             'preserveNullAndEmptyArrays': true,
+//         }
+//     },
+//     {
+//         '$group': {
+//             '_id': {'_id': '$_id'},
+//             'invitations': {'$push': {
+//                 'redirect_url': '$invitations.redirect_url',
+//                 'invited_at': '$invitations.invited_at',
+//                 'invited_by': '$invitations.invited_by',
+//                 'invited_to': '$invitations.invited_to',
+//                 'role': '$invitations.role',
+//                 'id': '$invitations.id'
+//             }}
+//         }
+//     },
+//     {
+//         '$project': {
+//             '_id': 0,
+//             'invitations': 1
+//         }
+//     }
+// ])
+
+
+// db.workspace_collection.findOneAndUpdate({'_id': ObjectId('6219b6f8c40a63ba87474e99')}, {
+//     // '$addToSet': {
+//     //     'pending': {
+//     //         'id': '6219b6f8c40a63ba87474e10',
+//     //         'email': 'kumara@primesens.com',
+//     //         'invited_at': new Date('2022-02-26T05:13:28'),
+//     //         'invited_by': '6219b8e44d09cf55b70e08dc',
+//     //         'role': 'admin'
+//     //     }
+//     // }
+//     '$set': {'pending': []}
+// })
+
+// db.users_collection.findOneAndUpdate({'_id': ObjectId('621d2e094d09cf55b70eb1aa')}, {
+//     // '$addToSet': {
+//     //     'invitations': {
+//     //         'redirect_url': 'http://localhost:8080/redirect?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJlbWFpbCI6Im1rbG1mZXJuYW5kb0BnbWFpbC5jb20iLCJyZWRpcmVjdF91cmwiOiJodHRwOi8vbG9jYWxob3N0OjgwODAvcmVkaXJlY3QiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjgwMDAvYXV0aCIsInN1YiI6IjYyMTliNTMzNGQwOWNmNTViNzBlMDc3NiIsImV4cCI6MTY0NTg1OTE2NiwiaWF0IjoxNjQ1ODUxOTY2LCJ0eXAiOiJUb2tlbiJ9.DilP_4MZYatPGWDY95NJFM_EIeJrPvwzT-fxDxCsVnpFo_EIY2bYdy_hXJw5gb111GEUrtifoeP9VCiSfVnl2ImivV5pvO2tMX7Fo5zuPl-MNEZzWvhSbboG6Axbt9PE3AbFy6R9Audq2RXhXGnlxNWZF6-MQfhPwWBh_ATKyMI',
+//     //         'invited_at': new Date('2022-02-26T05:13:28'),
+//     //         'invited_by': '6219b8e44d09cf55b70e08dc',
+//     //         'invited_to': '6219b6f8c40a63ba87474e99',
+//     //         'role': 'admin',
+//     //         'id': '6219b6f8c40a63ba87474e10'
+//     //     }
+//     // },
+//     '$set': {'is_delete': true}
+// })
+
+// db.users_collection.aggregate([
+//     {
+//         '$match': {
+//             '_id': ObjectId('6219b5334d09cf55b70e0776')
+//         }
+//     },
+//     {
+//         '$addFields': {
+//             'pending': {
+//                 '$map': {
+//                     'input': '$pending',
+//                     'in': {
+//                         '$mergeObjects': [
+//                             '$$this',
+//                             {
+//                                 'invited_at': {
+//                                     '$dateToString': {
+//                                         'date': '$updated_at',
+//                                         'format': '%G-%m-%dT%H:%M:%S.%L%z',
+//                                         'timezone': 'UTC'
+//                                     }
+//                                 }
+//                             }
+//                         ]
+//                     }
+//                 }
+//             }
+//         }
+//     },
+//     {
+//         '$project': {
+
+//         }
+//     }
+// ])
+// db.users_collection.findOneAndUpdate({'email': 'mklmfernando@gmail.com'}, { $set: {'is_verified': true, 'is_active': true}})
+
+// db.users_collection.findOneAndDelete({'email': 'mklmfernando@gmail.com'})
+
+// db.users_collection.aggregate([
+//     {
+//         $match: {
+//             email: 'mklmfernando@gmail.com'
+//         }
+//     },
+//     {
+//         $project: {
+//             'attributes.attr1': 1,
+//             'attributes.nestedattr.nestedattr1': 1
+//         }
+//     }
+// ])
+
+// db.users_collection.findOneAndUpdate(
+//     {
+//         '_id': ObjectId('6219b8e44d09cf55b70e08dc')
+//     },
+//     {
+//         '$set': {
+//             'is_active': true,
+//             'is_verified': true
+//         },
+//         '$addToSet': {
+//             'workspaces': {
+//                 "workspace_id": "6219b6f8c40a63ba87474e99",
+//                 "role": "admin"
+//             }
+//         },
+//     }
+// )
+
+// db.workspace_collection.findOneAndUpdate(
+//     {
+//         '_id': ObjectId('6219b6f8c40a63ba87474e99')
+//     },
+//     {
+//         '$addToSet': {
+//             'users': '6219b8e44d09cf55b70e08dc'
+//         }
+//     }
+// )
+
+db.workspace_collection.aggregate([
+    {
+        '$match': {
+            '_id': ObjectId('6219b6f8c40a63ba87474e99'),
+        }
+    },
+    {
+        '$addFields': {
+            'id': {
+                '$toString': '$_id'
+            },
+            'pending': {
+                '$map': {
+                    'input': '$pending',
+                    'in': {
+                        '$mergeObjects': [
+                            '$$this',
+                            {
+                                'invited_at': {
+                                    '$dateToString': {
+                                        'date': '$updated_at',
+                                        'format': '%G-%m-%dT%H:%M:%S.%L%z',
+                                        'timezone': 'UTC'
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    },
+    {
+        '$unwind': '$users'
+    },
+    {
+        '$lookup': {
+            'from': 'users_collection',
+            'let': {
+                'user_id': {
+                    '$toObjectId': '$users'
+                },
+                'org_id': '$id'
+            },
+            'pipeline': [
+                {
+                    '$match': {'$expr': {
+                        '$and': [
+                            {'$eq': ['$_id', '$$user_id']},
+                            {'$eq': ['$is_delete', false],}
+                        ]
+                    }}
+                },
+                {
+                    '$addFields': {
+                        'id': {
+                            '$toString': '$_id'
+                        }
+                    }
+                },
+                {
+                    '$project': {
+                        '_id': 0,
+                        'id': 1,
+                        'email': 1,
+                        'first_name': 1,
+                        'last_name': 1,
+                        'mobile_no': 1,
+                        'img_url': 1,
+                        'workspace': {
+                            '$filter': {
+                                'input': '$workspaces',
+                                'as': 'ws',
+                                'cond': {'$eq': ['$$ws.workspace_id', '$$org_id']}
+                            }
+                        }
+                    }
+                },
+                {
+                    '$unwind': {
+                        'path': '$workspace',
+                        'preserveNullAndEmptyArrays': true
+                    }
+                },
+                {
+                    '$project': {
+                        'id': 1,
+                        'email': 1,
+                        'first_name': 1,
+                        'last_name': 1,
+                        'mobile_no': 1,
+                        'img_url': 1,
+                        'role': '$workspace.role'
+                    }
+                },
+            ],
+            'as': 'users'
+        }
+    },
+    {
+        '$unwind': {
+            'path': '$users',
+            'preserveNullAndEmptyArrays': true
+        }
+    },
+    {
+        '$group': {
+            '_id': {'_id': '$_id'},
+            'id': {'$first': '$id'},
+            'name': {'$first': '$name'},
+            'img_url': {'$first': '$img_url'},
+            'located': {'$first': '$located'},
+            'subscription': {'$first': '$subscription'},
+            'attributes': {'$first': '$attributes'},
+            'pending': {'$first': '$pending'},
+            'users': {'$push': '$users'}
+        }
+    },
+    // {
+    //     '$unwind': {
+    //         'path': '$pending',
+    //         'preserveNullAndEmptyArrays': true
+    //     }
+    // },
+    // {
+    //     '$lookup': {
+    //         'from': 'users_collection',
+    //         'let': {
+    //             'user_id': {
+    //                 '$toObjectId': '$pending.invited_by'
+    //             },
+    //             'org_id': '$id'
+    //         },
+    //         'pipeline': [
+    //             {
+    //                 '$match': {'$expr': {'$eq': ['$_id', '$$user_id']}}
+    //             },
+    //             {
+    //                 '$addFields': {
+    //                     'id': {
+    //                         '$toString': '$_id'
+    //                     }
+    //                 }
+    //             },
+    //             {
+    //                 '$project': {
+    //                     '_id': 0,
+    //                     'id': 1,
+    //                     'email': 1,
+    //                     'first_name': 1,
+    //                     'last_name': 1,
+    //                     'mobile_no': 1,
+    //                     'img_url': 1,
+    //                     'workspace': {
+    //                         '$filter': {
+    //                             'input': '$workspaces',
+    //                             'as': 'ws',
+    //                             'cond': {'$eq': ['$$ws.workspace_id', '$$org_id']}
+    //                         }
+    //                     }
+    //                 }
+    //             },
+    //             {
+    //                 '$unwind': {
+    //                     'path': '$workspace',
+    //                     'preserveNullAndEmptyArrays': true
+    //                 }
+    //             },
+    //             {
+    //                 '$project': {
+    //                     'id': 1,
+    //                     'email': 1,
+    //                     'first_name': 1,
+    //                     'last_name': 1,
+    //                     'mobile_no': 1,
+    //                     'img_url': 1,
+    //                     'role': '$workspace.role'
+    //                 }
+    //             },
+    //         ],
+    //         'as': 'pending.invited_by'
+    //     }
+    // },
+    // {
+    //     '$unwind': {
+    //         'path': '$pending.invited_by',
+    //         'preserveNullAndEmptyArrays': true
+    //     }
+    // }
+])
+
+
+// db.users_collection.aggregate([
+//     {
+//         '$match': {
+//             '_id': ObjectId('6219b5334d09cf55b70e0776')
+//         }
+//     },
+//     {
+//         '$unwind': '$workspaces'
+//     },
+    // {
+    //     '$lookup': {
+    //         'from': 'workspace_collection',
+    //         'let': {
+    //             'workspace_id': {
+    //                 '$toObjectId': '$workspaces.workspace_id'
+    //             }
+    //         },
+    //         'pipeline': [
+    //             {
+    //                 '$match': {'$expr': {'$eq': ['$_id', '$$workspace_id']}}
+    //             },
+    //             {
+    //                 '$addFields': {
+    //                     'id': {
+    //                         '$toString': '$_id'
+    //                     }
+    //                 }
+    //             },
+    //             {
+    //                 '$project': {
+    //                     'id': 1,
+    //                     'name': 1,
+    //                     'img_url': 1,
+    //                     'created_at': {
+    //                         '$dateToString': {
+    //                             'date': '$created_at',
+    //                             'format': '%G-%m-%dT%H:%M:%S.%L%z',
+    //                             'timezone': 'UTC'
+    //                         }
+    //                     },
+    //                     'updated_at': {
+    //                         '$dateToString': {
+    //                             'date': '$updated_at',
+    //                             'format': '%G-%m-%dT%H:%M:%S.%L%z',
+    //                             'timezone': 'UTC'
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         ],
+    //         'as': 'workspaces'
+    //     }
+    // },
+    // {
+    //     '$unwind': '$workspaces'
+    // },
+//     {
+//         '$group': {
+//             '_id': {'_id': '$_id'},
+//             'workspaces': {'$push': {
+//                 'id': '$workspaces.id',
+//                 'name': '$workspaces.name',
+//                 'img_url': '$workspaces.img_url',
+//                 'created_at': '$workspaces.created_at',
+//                 'updated_at': '$workspaces.updated_at'
+//             }}
+//         }
+//     },
+//     {
+//         '$project': {'workspaces': 1}
+//     }
+// ])
+
+
+// db.users_collection.aggregate([
+//     {
+//         '$match': {
+//             '_id': ObjectId('6219b5334d09cf55b70e0776')
+//         }
+//     },
+//     {
+//         '$project': {
+//             'id': 1,
+//             'email': 1,
+//             'address': 1,
+//             'dob': 1,
+//             'first_name': 1,
+//             'last_name': 1,
+//             'gender': 1,
+//             'img_url': 1,
+//             'mobile_no': 1,
+//             'workspace': {
+//                 '$filter': {
+//                     'input': '$workspaces',
+//                     'as': 'ws',
+//                     'cond': {'$eq': ['$$ws.workspace_id', '$active_workspace']}
+//                 }
+//             }
+//         }
+//     },
+//     {
+//         '$unwind': {
+//             'path': '$workspace',
+//             'preserveNullAndEmptyArrays': true
+//         }
+//     },
+//     {
+//         '$addFields': {
+//             'id': {
+//                 '$toString': '$_id'
+//             },
+//             'role': '$workspace.role'
+//         }
+//     },
+//     {
+//         '$lookup': {
+//             'from': 'workspace_collection',
+//             'let': {
+//                 'workspace_id': {
+//                     '$toObjectId': '$workspace.workspace_id'
+//                 }
+//             },
+//             'pipeline': [
+//                 {
+//                     '$match': {'$expr': {'$eq': ['$_id', '$$workspace_id']}}
+//                 },
+//                 {
+//                     '$addFields': {
+//                         'id': {
+//                             '$toString': '$_id'
+//                         }
+//                     }
+//                 },
+//                 {
+//                     '$project': {
+//                         '_id': 0,
+//                         'id': 1,
+//                         'name': 1,
+//                         'img_url': 1,
+//                         'created_at': {
+//                             '$dateToString': {
+//                                 'date': '$created_at',
+//                                 'format': '%G-%m-%dT%H:%M:%S.%L%z',
+//                                 'timezone': 'UTC'
+//                             }
+//                         },
+//                         'updated_at': {
+//                             '$dateToString': {
+//                                 'date': '$updated_at',
+//                                 'format': '%G-%m-%dT%H:%M:%S.%L%z',
+//                                 'timezone': 'UTC'
+//                             }
+//                         }
+//                     }
+//                 }
+//             ],
+//             'as': 'active_workspace'
+//         }
+//     },
+//     {
+//         '$unwind': {
+//             'path': '$active_workspace',
+//             'preserveNullAndEmptyArrays': true
+//         }
+//     },
+// ])
